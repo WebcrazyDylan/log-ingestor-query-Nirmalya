@@ -37,21 +37,27 @@ export async function GET(req: Request) {
         AND: {
           level: {
             contains: getValue("level"),
+            mode: "insensitive",
           },
           message: {
             contains: getValue("message"),
+            mode: "insensitive",
           },
           commit: {
             contains: getValue("commit"),
+            mode: "insensitive",
           },
           resourceId: {
             contains: getValue("resourceId"),
+            mode: "insensitive",
           },
           traceId: {
             contains: getValue("traceId"),
+            mode: "insensitive",
           },
           spanId: {
             contains: getValue("spanId"),
+            mode: "insensitive",
           },
         },
       },
@@ -61,21 +67,6 @@ export async function GET(req: Request) {
     });
 
     dbData = logs;
-
-    const parsedColumnFilters = JSON.parse(
-      filters! as unknown as string
-    ) as MRT_ColumnFiltersState;
-    if (parsedColumnFilters?.length) {
-      parsedColumnFilters.map((filter) => {
-        const { id: columnId, value: filterValue } = filter;
-        dbData = dbData.filter((row) => {
-          return row[columnId as keyof Log]
-            ?.toString()
-            ?.toLowerCase()
-            ?.includes?.((filterValue as string).toLowerCase());
-        });
-      });
-    }
 
     if (globalFilter) {
       dbData = dbData.filter((row) =>
