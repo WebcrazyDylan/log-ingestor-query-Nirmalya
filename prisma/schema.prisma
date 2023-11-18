@@ -1,0 +1,30 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextIndex"]
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model Log {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  level      String
+  message    String
+  resourceId String
+  timestamp  DateTime
+  traceId    String
+  spanId     String
+  commit     String?
+  metadata   Metadata @relation(fields: [metadataId], references: [id])
+  metadataId String   @db.ObjectId
+
+  @@fulltext([message])
+}
+
+model Metadata {
+  id               String @id @default(auto()) @map("_id") @db.ObjectId
+  parentResourceId String
+  Log              Log[]
+}
