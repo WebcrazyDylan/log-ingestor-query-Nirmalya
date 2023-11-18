@@ -74,9 +74,11 @@ const sendLogEntry = async () => {
 };
 
 const sendLogEntries = async () => {
-  for (let i = 0; i < 10; i++) {
+  for (let i = 0; i < 100; i++) {
     await sendLogEntry();
   }
 };
 
 sendLogEntries();
+
+console.log("DONE!!!");

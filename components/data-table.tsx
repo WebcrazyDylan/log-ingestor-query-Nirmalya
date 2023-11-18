@@ -17,57 +17,54 @@ import {
   type MRT_Virtualizer,
 } from "material-react-table";
 import { Typography } from "@mui/material";
-import {
-  QueryClient,
-  QueryClientProvider,
-  useInfiniteQuery,
-} from "@tanstack/react-query";
+import { useInfiniteQuery } from "@tanstack/react-query";
 
-//Your API response shape will probably be different. Knowing a total row count is important though.
-type UserApiResponse = {
-  data: Array<User>;
+import { Log } from "@/types";
+
+type LogApiResponse = {
+  data: Array<Log>;
   meta: {
     totalRowCount: number;
   };
 };
 
-type User = {
-  firstName: string;
-  lastName: string;
-  address: string;
-  state: string;
-  phoneNumber: string;
-};
-
-const columns: MRT_ColumnDef<User>[] = [
+const columns: MRT_ColumnDef<Log>[] = [
   {
-    accessorKey: "firstName",
-    header: "First Name",
+    accessorKey: "level",
+    header: "Level",
   },
   {
-    accessorKey: "lastName",
-    header: "Last Name",
+    accessorKey: "message",
+    header: "Message",
   },
   {
-    accessorKey: "address",
-    header: "Address",
+    accessorKey: "resourceId",
+    header: "ResourceID",
   },
   {
-    accessorKey: "state",
-    header: "State",
+    accessorKey: "timestamp",
+    header: "TimeStamp",
   },
   {
-    accessorKey: "phoneNumber",
-    header: "Phone Number",
+    accessorKey: "traceId",
+    header: "TraceID",
+  },
+  {
+    accessorKey: "spanId",
+    header: "SpanID",
+  },
+  {
+    accessorKey: "commit",
+    header: "Commit",
   },
 ];
 
 const fetchSize = 10;
 
-export const Example = () => {
-  const tableContainerRef = useRef<HTMLDivElement>(null); //we can get access to the underlying TableContainer element and react to its scroll events
+export function DataTable() {
+  const tableContainerRef = useRef<HTMLDivElement>(null);
   const rowVirtualizerInstanceRef =
-    useRef<MRT_Virtualizer<HTMLDivElement, HTMLTableRowElement>>(null); //we can get access to the underlying Virtualizer instance and call its scrollToIndex method
+    useRef<MRT_Virtualizer<HTMLDivElement, HTMLTableRowElement>>(null);
 
   const [columnFilters, setColumnFilters] = useState<MRT_ColumnFiltersState>(
     []
@@ -76,15 +73,10 @@ export const Example = () => {
   const [sorting, setSorting] = useState<MRT_SortingState>([]);
 
   const { data, fetchNextPage, isError, isFetching, isLoading } =
-    useInfiniteQuery<UserApiResponse>({
-      queryKey: [
-        "table-data",
-        columnFilters, //refetch when columnFilters changes
-        globalFilter, //refetch when globalFilter changes
-        sorting, //refetch when sorting changes
-      ],
+    useInfiniteQuery<LogApiResponse>({
+      queryKey: ["table-data", columnFilters, globalFilter, sorting],
       queryFn: async ({ pageParam }) => {
-        const url = new URL("/api/data", "http://localhost:3000");
+        const url = new URL("/api", "http://localhost:3000");
         url.searchParams.set("start", `${(pageParam as number) * fetchSize}`);
         url.searchParams.set("size", `${fetchSize}`);
         url.searchParams.set("filters", JSON.stringify(columnFilters ?? []));
@@ -92,7 +84,7 @@ export const Example = () => {
         url.searchParams.set("sorting", JSON.stringify(sorting ?? []));
 
         const response = await fetch(url.href);
-        const json = (await response.json()) as UserApiResponse;
+        const json = (await response.json()) as LogApiResponse;
         return json;
       },
       initialPageParam: 0,
@@ -108,12 +100,11 @@ export const Example = () => {
   const totalDBRowCount = data?.pages?.[0]?.meta?.totalRowCount ?? 0;
   const totalFetched = flatData.length;
 
-  //called on scroll and possibly on mount to fetch more data as the user scrolls and reaches bottom of table
   const fetchMoreOnBottomReached = useCallback(
     (containerRefElement?: HTMLDivElement | null) => {
       if (containerRefElement) {
         const { scrollHeight, scrollTop, clientHeight } = containerRefElement;
-        //once the user has scrolled within 400px of the bottom of the table, fetch more data if we can
+
         if (
           scrollHeight - scrollTop - clientHeight < 400 &&
           !isFetching &&
@@ -126,9 +117,7 @@ export const Example = () => {
     [fetchNextPage, isFetching, totalFetched, totalDBRowCount]
   );
 
-  //scroll to top of table when sorting or filters change
   useEffect(() => {
-    //scroll to the top of the table when the sorting changes
     try {
       rowVirtualizerInstanceRef.current?.scrollToIndex?.(0);
     } catch (error) {
@@ -136,7 +125,6 @@ export const Example = () => {
     }
   }, [sorting, columnFilters, globalFilter]);
 
-  //a check on mount to see if the table is already scrolled to the bottom and immediately needs to fetch more data
   useEffect(() => {
     fetchMoreOnBottomReached(tableContainerRef.current);
   }, [fetchMoreOnBottomReached]);
@@ -150,10 +138,9 @@ export const Example = () => {
     manualFiltering: true,
     manualSorting: true,
     muiTableContainerProps: {
-      ref: tableContainerRef, //get access to the table container element
-      sx: { maxHeight: "600px" }, //give the table a max height
+      ref: tableContainerRef,
       onScroll: (event: UIEvent<HTMLDivElement>) =>
-        fetchMoreOnBottomReached(event.target as HTMLDivElement), //add an event listener to the table container element
+        fetchMoreOnBottomReached(event.target as HTMLDivElement),
     },
     muiToolbarAlertBannerProps: isError
       ? {
@@ -177,9 +164,9 @@ export const Example = () => {
       showProgressBars: isFetching,
       sorting,
     },
-    rowVirtualizerInstanceRef, //get access to the virtualizer instance
+    rowVirtualizerInstanceRef,
     rowVirtualizerOptions: { overscan: 4 },
   });
 
   return <MaterialReactTable table={table} />;
-};
+}

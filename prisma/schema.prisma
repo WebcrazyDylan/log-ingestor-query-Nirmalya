@@ -16,11 +16,11 @@ model Log {
   timestamp  DateTime
   traceId    String
   spanId     String
-  commit     String?
+  commit     String
   metadata   Metadata @relation(fields: [metadataId], references: [id])
   metadataId String   @db.ObjectId
 
-  @@fulltext([message])
+  @@fulltext([level, message, resourceId, traceId, spanId, commit])
 }
 
 model Metadata {

@@ -1,9 +1,9 @@
-import { Example } from "@/components/table";
+import { DataTable } from "@/components/data-table";
 
 export default function Home() {
   return (
     <main>
-      <Example />
+      <DataTable />
     </main>
   );
 }
