@@ -76,7 +76,12 @@ export function DataTable() {
     useInfiniteQuery<LogApiResponse>({
       queryKey: ["table-data", columnFilters, globalFilter, sorting],
       queryFn: async ({ pageParam }) => {
-        const url = new URL("/api", "http://localhost:3000");
+        const url = new URL(
+          "/api",
+          process.env.VERCEL_URL
+            ? `https://${process.env.VERCEL_URL}`
+            : "http://localhost:3000"
+        );
         url.searchParams.set("start", `${(pageParam as number) * fetchSize}`);
         url.searchParams.set("size", `${fetchSize}`);
         url.searchParams.set("filters", JSON.stringify(columnFilters ?? []));

@@ -79,6 +79,6 @@ const sendLogEntries = async () => {
   }
 };
 
-sendLogEntries();
-
-console.log("DONE!!!");
+sendLogEntries()
+  .then(() => console.log("DONE!!!"))
+  .catch(() => console.error("FAILED!"));
