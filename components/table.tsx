@@ -1,3 +1,5 @@
+"use client";
+
 import {
   type UIEvent,
   useCallback,
@@ -19,7 +21,7 @@ import {
   QueryClient,
   QueryClientProvider,
   useInfiniteQuery,
-} from "@tanstack/react-query"; //Note: this is TanStack React Query V5
+} from "@tanstack/react-query";
 
 //Your API response shape will probably be different. Knowing a total row count is important though.
 type UserApiResponse = {
@@ -60,9 +62,9 @@ const columns: MRT_ColumnDef<User>[] = [
   },
 ];
 
-const fetchSize = 25;
+const fetchSize = 10;
 
-const Example = () => {
+export const Example = () => {
   const tableContainerRef = useRef<HTMLDivElement>(null); //we can get access to the underlying TableContainer element and react to its scroll events
   const rowVirtualizerInstanceRef =
     useRef<MRT_Virtualizer<HTMLDivElement, HTMLTableRowElement>>(null); //we can get access to the underlying Virtualizer instance and call its scrollToIndex method
@@ -82,12 +84,7 @@ const Example = () => {
         sorting, //refetch when sorting changes
       ],
       queryFn: async ({ pageParam }) => {
-        const url = new URL(
-          "/api/data",
-          process.env.NODE_ENV === "production"
-            ? "https://www.material-react-table.com"
-            : "http://localhost:3000"
-        );
+        const url = new URL("/api/data", "http://localhost:3000");
         url.searchParams.set("start", `${(pageParam as number) * fetchSize}`);
         url.searchParams.set("size", `${fetchSize}`);
         url.searchParams.set("filters", JSON.stringify(columnFilters ?? []));
@@ -186,14 +183,3 @@ const Example = () => {
 
   return <MaterialReactTable table={table} />;
 };
-
-const queryClient = new QueryClient();
-
-const ExampleWithReactQueryProvider = () => (
-  //App.tsx or AppProviders file. Don't just wrap this component with QueryClientProvider! Wrap your whole App!
-  <QueryClientProvider client={queryClient}>
-    <Example />
-  </QueryClientProvider>
-);
-
-export default ExampleWithReactQueryProvider;
