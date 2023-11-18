@@ -131,6 +131,11 @@ export function DataTable() {
 
   const table = useMaterialReactTable({
     columns,
+    initialState: {
+      showColumnFilters: true,
+      isFullScreen: true,
+      showGlobalFilter: true,
+    },
     data: flatData,
     enablePagination: false,
     enableRowNumbers: true,
