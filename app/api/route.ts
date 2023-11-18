@@ -18,21 +18,53 @@ export async function GET(req: Request) {
 
   let dbData: Log[];
 
+  function getValue(
+    id: "level" | "message" | "commit" | "resourceId" | "traceId" | "spanId"
+  ) {
+    if (filters?.length! <= 2) return "";
+    const filter = JSON.parse(filters!);
+    for (const item of filter) {
+      if (item.id === id) {
+        return item.value;
+      }
+    }
+    return "";
+  }
+
   try {
-    const logs = await db.$transaction([
-      db.log.count(),
-      db.log.findMany({
-        // take: parseInt(start!),
-        include: {
-          metadata: true,
+    const logs = await db.log.findMany({
+      where: {
+        AND: {
+          level: {
+            contains: getValue("level"),
+          },
+          message: {
+            contains: getValue("message"),
+          },
+          commit: {
+            contains: getValue("commit"),
+          },
+          resourceId: {
+            contains: getValue("resourceId"),
+          },
+          traceId: {
+            contains: getValue("traceId"),
+          },
+          spanId: {
+            contains: getValue("spanId"),
+          },
         },
-      }),
-    ]);
+      },
+      include: {
+        metadata: true,
+      },
+    });
 
-    dbData = logs[1];
-    console.log(dbData);
+    dbData = logs;
 
-    const parsedColumnFilters = JSON.parse(filters!) as MRT_ColumnFiltersState;
+    const parsedColumnFilters = JSON.parse(
+      filters! as unknown as string
+    ) as MRT_ColumnFiltersState;
     if (parsedColumnFilters?.length) {
       parsedColumnFilters.map((filter) => {
         const { id: columnId, value: filterValue } = filter;
