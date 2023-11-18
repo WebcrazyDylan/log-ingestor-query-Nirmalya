@@ -1,8 +1,4 @@
 import { NextResponse } from "next/server";
-import {
-  type MRT_ColumnFiltersState,
-  type MRT_SortingState,
-} from "material-react-table";
 
 import { db } from "@/lib/db";
 import { Log } from "@/types";
@@ -14,7 +10,6 @@ export async function GET(req: Request) {
   const filters = searchParams.get("filters");
   const globalFilter = searchParams.get("globalFilter");
   const sorting = searchParams.get("sorting");
-  console.log({ start, size, filters, sorting, globalFilter });
 
   let dbData: Log[];
 
@@ -30,6 +25,16 @@ export async function GET(req: Request) {
     }
     return "";
   }
+
+  const getOrder = () => {
+    if (sorting?.length! <= 2) return { id: "", desc: "" };
+    const sort = JSON.parse(sorting!);
+    return {
+      id: sort[0].id,
+      desc: sort[0].desc,
+    };
+  };
+  const order = getOrder();
 
   try {
     const logs = await db.log.findMany({
@@ -61,6 +66,19 @@ export async function GET(req: Request) {
           },
         },
       },
+      orderBy: {
+        level: order.id === "level" ? (order.desc ? "desc" : "asc") : undefined,
+        message:
+          order.id === "message" ? (order.desc ? "desc" : "asc") : undefined,
+        commit:
+          order.id === "commit" ? (order.desc ? "desc" : "asc") : undefined,
+        resourceId:
+          order.id === "resourceId" ? (order.desc ? "desc" : "asc") : undefined,
+        traceId:
+          order.id === "traceId" ? (order.desc ? "desc" : "asc") : undefined,
+        spanId:
+          order.id === "spanId" ? (order.desc ? "desc" : "asc") : undefined,
+      },
       include: {
         metadata: true,
       },
@@ -77,18 +95,6 @@ export async function GET(req: Request) {
             ?.includes?.((globalFilter as string).toLowerCase())
         )
       );
-    }
-
-    const parsedSorting = JSON.parse(sorting!) as MRT_SortingState;
-    if (parsedSorting?.length) {
-      const sort = parsedSorting[0];
-      const { id, desc } = sort;
-      dbData.sort((a, b) => {
-        if (desc) {
-          return a[id as keyof Log] < b[id as keyof Log] ? 1 : -1;
-        }
-        return a[id as keyof Log] > b[id as keyof Log] ? 1 : -1;
-      });
     }
 
     return NextResponse.json(
