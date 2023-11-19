@@ -1,36 +1,33 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# React Native Shopping App
 
-## Getting Started
+This is a simple shopping app built with React Native, Expo & TypeScript, using a Node.js backend & PostgreSQL with [Neon](https://neon.tech/).
 
-First, run the development server:
+To run the project, check out the [react-native-frontend](./react-native-frontend) and [express-server](./express-server) directories.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+Credits: [Simon](https://twitter.com/schlimmson)
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Preview
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+<div align='center'>
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+### Home Screen
 
-## Learn More
+<img src="https://github.com/nayak-nirmalya/log-ingestor-query/assets/52202635/4103674f-41d7-44d8-972f-050d200e8e91" width="80%">
 
-To learn more about Next.js, take a look at the following resources:
+### Filter Single Column
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+<img src="https://github.com/nayak-nirmalya/log-ingestor-query/assets/52202635/8d887d9b-0789-4f4a-b663-42050a2df321" width="80%">
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+### Filter Multiple Column with Partial Text Search
 
-## Deploy on Vercel
+<img src="https://github.com/nayak-nirmalya/log-ingestor-query/assets/52202635/5afa8b5e-88a1-4f9e-9076-5f10cbe74fc7" width="80%">
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Filter Multiple Column with Partial/Case-Insensitive Text with Sort & Pagination
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+<img src="https://github.com/nayak-nirmalya/log-ingestor-query/assets/52202635/93a74938-ee68-4ff0-8924-c7938ecad783" width="80%">
+
+### Global Partial Text Search
+
+<img src="https://github.com/nayak-nirmalya/log-ingestor-query/assets/52202635/776c58a0-c34f-468e-a9a3-a90fe71e8535" width="80%">
+
+</div>
