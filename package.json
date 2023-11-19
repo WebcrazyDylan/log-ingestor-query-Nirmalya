@@ -9,7 +9,8 @@
     "lint": "next lint",
     "seed": "ts-node  --skip-project ./script/push_dummy.ts",
     "prisma:gen": "npx prisma generate",
-    "prisma:std": "npx prisma studio"
+    "prisma:std": "npx prisma studio",
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "@emotion/react": "^11.11.1",
