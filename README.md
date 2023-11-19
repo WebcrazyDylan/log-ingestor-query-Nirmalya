@@ -1,10 +1,72 @@
-# React Native Shopping App
+# FullStack Log-Ingest-Query WebApp: Next.js 14, React, Prisma, Tailwind, MongoDB & TypeScript.
 
-This is a simple shopping app built with React Native, Expo & TypeScript, using a Node.js backend & PostgreSQL with [Neon](https://neon.tech/).
+Deployed Instance of App in Vercel: [LINK - Click Here](https://log-ingestor-query.vercel.app/)
 
-To run the project, check out the [react-native-frontend](./react-native-frontend) and [express-server](./express-server) directories.
+Features:
 
-Credits: [Simon](https://twitter.com/schlimmson)
+- Ingest high volumes of data to POST `http://localhost:3000/api`
+- Sort, Query data in a tabular format
+- Server Side Sort, Query, Filter & Pagination
+- Responsive UI
+- Fully TypeSafe with TypeScript
+- Next.js 14 App Router for Handling HTTP Requests
+
+TODO:
+
+- Filter by Date
+- Regex Filter
+- Realtime Log Ingestion
+- Input Filter validation with 'zod'
+
+### Prerequisites
+
+**Node version 18.x.x**
+
+### Cloning the repository
+
+```shell
+git clone https://github.com/nayak-nirmalya/log-ingestor-query.git
+```
+
+### Install packages
+
+```shell
+npm install
+```
+
+### Setup .env File
+
+```js
+DATABASE_URL=
+```
+
+### Setup Prisma
+
+Add MongoDB Database URL (MongoDB Atlas)
+
+```shell
+npx prisma generate
+npx prisma db push
+```
+
+### Start the app
+
+```shell
+npm run dev
+```
+
+## Available commands
+
+Running commands with npm `npm run [command]`
+
+| command      | description                                              |
+| :----------- | :------------------------------------------------------- |
+| `dev`        | Starts a development instance of the app                 |
+| `lint`       | Run lint check                                           |
+| `build`      | Start building app for deployment                        |
+| `start`      | Run build version of app                                 |
+| `seed`       | Seed/Ingest random dummy data in given format to the app |
+| `prisma:std` | Start studio to visualize & edit database                |
 
 ## Preview
 
