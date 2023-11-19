@@ -37,52 +37,91 @@ export async function GET(req: Request) {
   const order = getOrder();
 
   try {
-    const logs = await db.log.findMany({
-      where: {
-        AND: {
-          level: {
-            contains: getValue("level"),
-            mode: "insensitive",
-          },
-          message: {
-            contains: getValue("message"),
-            mode: "insensitive",
-          },
-          commit: {
-            contains: getValue("commit"),
-            mode: "insensitive",
-          },
-          resourceId: {
-            contains: getValue("resourceId"),
-            mode: "insensitive",
-          },
-          traceId: {
-            contains: getValue("traceId"),
-            mode: "insensitive",
-          },
-          spanId: {
-            contains: getValue("spanId"),
-            mode: "insensitive",
+    const [count, logs] = await db.$transaction([
+      db.log.count({
+        where: {
+          AND: {
+            level: {
+              contains: getValue("level"),
+              mode: "insensitive",
+            },
+            message: {
+              contains: getValue("message"),
+              mode: "insensitive",
+            },
+            commit: {
+              contains: getValue("commit"),
+              mode: "insensitive",
+            },
+            resourceId: {
+              contains: getValue("resourceId"),
+              mode: "insensitive",
+            },
+            traceId: {
+              contains: getValue("traceId"),
+              mode: "insensitive",
+            },
+            spanId: {
+              contains: getValue("spanId"),
+              mode: "insensitive",
+            },
           },
         },
-      },
-      orderBy: {
-        level: order.id === "level" ? (order.desc ? "desc" : "asc") : undefined,
-        message:
-          order.id === "message" ? (order.desc ? "desc" : "asc") : undefined,
-        commit:
-          order.id === "commit" ? (order.desc ? "desc" : "asc") : undefined,
-        resourceId:
-          order.id === "resourceId" ? (order.desc ? "desc" : "asc") : undefined,
-        traceId:
-          order.id === "traceId" ? (order.desc ? "desc" : "asc") : undefined,
-        spanId:
-          order.id === "spanId" ? (order.desc ? "desc" : "asc") : undefined,
-      },
-      include: {
-        metadata: true,
-      },
-    });
+      }),
+      db.log.findMany({
+        take: parseInt(size!),
+        skip: parseInt(start!),
+        where: {
+          AND: {
+            level: {
+              contains: getValue("level"),
+              mode: "insensitive",
+            },
+            message: {
+              contains: getValue("message"),
+              mode: "insensitive",
+            },
+            commit: {
+              contains: getValue("commit"),
+              mode: "insensitive",
+            },
+            resourceId: {
+              contains: getValue("resourceId"),
+              mode: "insensitive",
+            },
+            traceId: {
+              contains: getValue("traceId"),
+              mode: "insensitive",
+            },
+            spanId: {
+              contains: getValue("spanId"),
+              mode: "insensitive",
+            },
+          },
+        },
+        orderBy: {
+          level:
+            order.id === "level" ? (order.desc ? "desc" : "asc") : undefined,
+          message:
+            order.id === "message" ? (order.desc ? "desc" : "asc") : undefined,
+          commit:
+            order.id === "commit" ? (order.desc ? "desc" : "asc") : undefined,
+          resourceId:
+            order.id === "resourceId"
+              ? order.desc
+                ? "desc"
+                : "asc"
+              : undefined,
+          traceId:
+            order.id === "traceId" ? (order.desc ? "desc" : "asc") : undefined,
+          spanId:
+            order.id === "spanId" ? (order.desc ? "desc" : "asc") : undefined,
+        },
+        include: {
+          metadata: true,
+        },
+      }),
+    ]);
 
     dbData = logs;
 
@@ -99,10 +138,8 @@ export async function GET(req: Request) {
 
     return NextResponse.json(
       {
-        data:
-          dbData?.slice(parseInt(start!), parseInt(start!) + parseInt(size!)) ??
-          [],
-        meta: { totalRowCount: dbData.length },
+        data: dbData,
+        meta: { totalRowCount: globalFilter ? dbData.length : count },
       },
       { status: 200 }
     );
